@@ -283,6 +283,16 @@ export function renderApp(state: AppViewState) {
       </header>
       <aside class="nav ${state.settings.navCollapsed ? "nav--collapsed" : ""}">
         ${tabGroupsForMode(state.uiMode).map((group) => {
+          // "main" = basic-mode flat list — no collapsible group header
+          if (group.label === "main") {
+            return html`
+              <div class="nav-group">
+                <div class="nav-group__items">
+                  ${group.tabs.map((tab) => renderTab(state, tab))}
+                </div>
+              </div>
+            `;
+          }
           const isGroupCollapsed = state.settings.navGroupsCollapsed[group.label] ?? false;
           const hasActiveTab = group.tabs.some((tab) => tab === state.tab);
           return html`

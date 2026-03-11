@@ -1,15 +1,9 @@
 import { t } from "../i18n/index.ts";
 import type { IconName } from "./icons.js";
 
-// Basic mode: human-centered groups with friendlier nav structure
+// Basic mode: exactly 4 items, no group labels. Everything else is advanced-only.
 export const BASIC_TAB_GROUPS = [
-  { label: "chat", tabs: ["chat"] },
-  { label: "status", tabs: ["overview", "channels", "instances"] },
-  { label: "brain", tabs: ["samskara"] },
-  { label: "automation", tabs: ["cron"] },
-  { label: "assistant", tabs: ["agents", "skills", "nodes"] },
-  // Advanced tabs collapsed under "More" in basic mode
-  { label: "more", tabs: ["sessions", "usage", "config", "logs", "debug"] },
+  { label: "main", tabs: ["overview", "chat", "samskara", "instances"] },
 ] as const;
 
 // Advanced mode: full developer groups (original layout + samskara)
@@ -68,13 +62,13 @@ export function tabGroupsForMode(mode: UiMode) {
   return mode === "basic" ? BASIC_TAB_GROUPS : ADVANCED_TAB_GROUPS;
 }
 
-/** Tabs hidden in basic mode (collapsed into "More") */
-export const BASIC_MODE_HIDDEN_TABS = new Set<Tab>(["sessions", "usage", "config", "logs", "debug"]);
+/** The 4 tabs visible in basic mode. Everything else is advanced-only. */
+export const BASIC_TABS = new Set<Tab>(["overview", "chat", "samskara", "instances"]);
 
-/** Whether a tab is visible in basic mode (not collapsed) */
+/** Whether a tab is visible in basic mode */
 export function isTabVisibleInMode(tab: Tab, mode: UiMode): boolean {
   if (mode === "advanced") return true;
-  return !BASIC_MODE_HIDDEN_TABS.has(tab);
+  return BASIC_TABS.has(tab);
 }
 
 export function normalizeBasePath(basePath: string): string {
