@@ -1,0 +1,5 @@
+--- a/src/agents/sandbox/config.ts
++++ b/src/agents/sandbox/config.ts
+@@ sandbox mode default
+-    mode: agentSandbox?.mode ?? agent?.mode ?? "off",
++    mode: agentSandbox?.mode ?? agent?.mode ?? "container", // W1 fix: default to container sandbox, not off

@@ -1,0 +1,59 @@
+{
+  "id": "samskara-bridge",
+  "name": "Samskara Brain Bridge",
+  "description": "Connects Orca to the Samskara brain (https://samskara-mind.replit.app). Adds Buddhi reasoning, Chitta memory, Viveka safety checks, and karma feedback to every agent response.",
+  "version": "1.0.0",
+  "kind": "agent-enhancement",
+  "main": "./src/index.ts",
+  "configSchema": {
+    "type": "object",
+    "required": ["apiKey"],
+    "properties": {
+      "apiKey": {
+        "type": "string",
+        "description": "Samskara tenant API key (X-API-Key). Set via SAMSKARA_API_KEY env var.",
+        "envVar": "SAMSKARA_API_KEY"
+      },
+      "agentId": {
+        "type": "string",
+        "description": "Registered agent ID in Samskara. Default: orca-v1",
+        "default": "orca-v1",
+        "envVar": "SAMSKARA_AGENT_ID"
+      },
+      "baseUrl": {
+        "type": "string",
+        "description": "Samskara server base URL. Override for private deployments.",
+        "default": "https://samskara-mind.replit.app"
+      },
+      "enforceSafety": {
+        "type": "boolean",
+        "description": "Block tool execution when Samskara safety check returns allowed:false.",
+        "default": true
+      },
+      "injectConsultContext": {
+        "type": "boolean",
+        "description": "Prepend Buddhi analysis to LLM system prompt on every response.",
+        "default": true
+      },
+      "confidenceThreshold": {
+        "type": "number",
+        "description": "Minimum Buddhi confidence (0-1) to treat analysis as authoritative.",
+        "default": 0.3
+      }
+    }
+  },
+  "uiHints": {
+    "apiKey": {
+      "label": "Samskara API Key",
+      "helpText": "Your Samskara tenant key — starts with sk_"
+    },
+    "agentId": {
+      "label": "Agent ID",
+      "helpText": "The agent ID registered in Samskara. See samskara-mind.replit.app"
+    },
+    "enforceSafety": {
+      "label": "Enforce Safety Gate",
+      "helpText": "When enabled, tool calls blocked by Samskara's Viveka layer will not execute."
+    }
+  }
+}

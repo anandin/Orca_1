@@ -1,0 +1,50 @@
+version: "3.9"
+# ═══════════════════════════════════════════════════════════
+#  Orca — Local Development
+#  Usage: OPENAI_API_KEY=sk-... docker compose up
+# ═══════════════════════════════════════════════════════════
+
+services:
+  orca-gateway:
+    build:
+      context: ./orca
+      dockerfile: Dockerfile
+    image: orca:local
+    container_name: orca-gateway
+    restart: unless-stopped
+    ports:
+      - "18789:18789"
+    volumes:
+      - orca-data:/home/node/.openclaw
+      - ./orca/openclaw.default.json:/home/node/.openclaw/openclaw.json:ro
+    environment:
+      # LLM providers (at least one required)
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      # Samskara brain (required)
+      - SAMSKARA_API_KEY=${SAMSKARA_API_KEY:-}
+      - SAMSKARA_AGENT_ID=${SAMSKARA_AGENT_ID:-orca-v1}
+      # Gateway auth
+      - ORCA_GATEWAY_TOKEN=${ORCA_GATEWAY_TOKEN:-orca-dev-token-change-me}
+      # Channels (optional)
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN:-}
+      - SLACK_BOT_TOKEN=${SLACK_BOT_TOKEN:-}
+      - SLACK_APP_TOKEN=${SLACK_APP_TOKEN:-}
+    command: node openclaw.mjs gateway --allow-unconfigured --bind loopback --port 18789
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:18789/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - NET_RAW
+      - NET_ADMIN
+
+volumes:
+  orca-data:
+    name: orca_data
