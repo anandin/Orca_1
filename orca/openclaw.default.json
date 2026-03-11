@@ -1,0 +1,100 @@
+{
+  "$comment": "Orca default configuration — JARVIS-style AI assistant with Samskara brain",
+  "$comment2": "Copy to ~/.openclaw/openclaw.json and set your API keys in .env",
+
+  "gateway": {
+    "mode": "local",
+    "bind": "loopback",
+    "port": 18789,
+    "auth": {
+      "mode": "token",
+      "token": "${ORCA_GATEWAY_TOKEN}"
+    },
+    "tls": {
+      "enabled": true,
+      "autoGenerate": true
+    }
+  },
+
+  "agents": {
+    "orca": {
+      "identity": {
+        "name": "Orca",
+        "emoji": "🐋",
+        "description": "Precision AI assistant. Thinks before acting. Never loops. Never lies.",
+        "instructions": "You are Orca — a JARVIS-style AI assistant. You are precise, calm, and proactive. You consult the Samskara brain before every significant response. You use the Buddhi analysis to inform (not replace) your reasoning. You surface failures immediately. You never repeat the same tool call more than twice."
+      },
+      "plugins": {
+        "acpx": {
+          "permissionMode": "approve-reads",
+          "timeoutSeconds": 120,
+          "mcpServers": {
+            "samskara-orca": {
+              "type": "url",
+              "url": "https://samskara-mind.replit.app/mcp",
+              "headers": {
+                "X-API-Key": "${SAMSKARA_API_KEY}"
+              }
+            }
+          }
+        },
+        "samskara-bridge": {
+          "apiKey": "${SAMSKARA_API_KEY}",
+          "agentId": "orca-v1",
+          "enforceSafety": true,
+          "injectConsultContext": true,
+          "confidenceThreshold": 0.3
+        },
+        "memory-core": {}
+      },
+      "sandbox": {
+        "mode": "container"
+      },
+      "tools": {
+        "allowlist": [
+          "bash",
+          "read_file",
+          "write_file",
+          "search_web",
+          "browser_navigate",
+          "browser_screenshot",
+          "cron_schedule",
+          "send_message"
+        ]
+      }
+    }
+  },
+
+  "models": {
+    "defaults": {
+      "provider": "openai",
+      "model": "gpt-4o",
+      "maxTokens": 4096
+    },
+    "failover": [
+      { "provider": "anthropic", "model": "claude-opus-4-6" },
+      { "provider": "gemini", "model": "gemini-2.0-flash-exp" }
+    ]
+  },
+
+  "memory": {
+    "plugin": "memory-core",
+    "decay": {
+      "halfLifeDays": 30
+    },
+    "search": {
+      "hybridWeight": 0.6,
+      "maxResults": 20
+    }
+  },
+
+  "security": {
+    "sandbox": {
+      "defaultMode": "container",
+      "allowHostExecution": false
+    },
+    "pairing": {
+      "entropyBits": 128
+    }
+  }
+}

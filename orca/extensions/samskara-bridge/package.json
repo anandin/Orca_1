@@ -1,0 +1,17 @@
+{
+  "name": "@orca/samskara-bridge",
+  "version": "1.0.0",
+  "description": "Samskara brain integration for Orca AI assistant",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
