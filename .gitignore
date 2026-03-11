@@ -1,0 +1,7 @@
+# orca/ is a local working copy of the OpenClaw fork.
+# Our additions from this fork are committed at the repo root:
+#   samskara-bridge/       ← Samskara brain extension
+#   openclaw.default.json  ← Zero-config default
+#   orca-fly.toml          ← Fly.io deployment config
+#   patches/               ← Security hardening diffs
+orca/
