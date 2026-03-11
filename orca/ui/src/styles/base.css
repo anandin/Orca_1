@@ -1,56 +1,74 @@
 :root {
-  /* Background - Warmer dark with depth */
-  --bg: #12141a;
-  --bg-accent: #14161d;
-  --bg-elevated: #1a1d25;
-  --bg-hover: #262a35;
-  --bg-muted: #262a35;
+  /* ── Vedic Chakra Semantic Colors ─────────────────────────────────────────
+     Use ONLY for status indicators — never decoratively.
+     Semantic map: consciousness state → visual signal.               */
+  --muladhara:           #8B0000;              /* Critical / Blocked / Kill  */
+  --muladhara-subtle:    rgba(139, 0, 0, 0.15);
+  --svadhisthana:        #E8620A;              /* Warning / Degraded         */
+  --svadhisthana-subtle: rgba(232, 98, 10, 0.15);
+  --manipura:            #D4A017;              /* Caution / Learning paused  */
+  --manipura-subtle:     rgba(212, 160, 23, 0.15);
+  --anahata:             #5A8A6B;              /* Healthy / Normal           */
+  --anahata-subtle:      rgba(90, 138, 107, 0.15);
+  --vishuddha:           #2A7F8F;              /* Active / Streaming         */
+  --vishuddha-subtle:    rgba(42, 127, 143, 0.15);
+  --ajna:                #5C58CC;              /* Thinking / Savikalpa       */
+  --ajna-subtle:         rgba(92, 88, 204, 0.15);
+  --sahasrara:           #8B5CF6;              /* Peak / Pratyaksha / Crown  */
+  --sahasrara-subtle:    rgba(139, 92, 246, 0.15);
 
-  /* Card / Surface - More contrast between levels */
-  --card: #181b22;
-  --card-foreground: #f4f4f5;
-  --card-highlight: rgba(255, 255, 255, 0.05);
-  --popover: #181b22;
-  --popover-foreground: #f4f4f5;
+  /* Background - Deep space */
+  --bg: #0D0F14;
+  --bg-accent: #10121a;
+  --bg-elevated: #141720;
+  --bg-hover: #1a1d2a;
+  --bg-muted: #1a1d2a;
+
+  /* Card / Surface */
+  --card: #13161e;
+  --card-foreground: #E8E6DF;
+  --card-highlight: rgba(255, 255, 255, 0.04);
+  --popover: #13161e;
+  --popover-foreground: #E8E6DF;
 
   /* Panel */
-  --panel: #12141a;
-  --panel-strong: #1a1d25;
-  --panel-hover: #262a35;
-  --chrome: rgba(18, 20, 26, 0.95);
-  --chrome-strong: rgba(18, 20, 26, 0.98);
+  --panel: #0D0F14;
+  --panel-strong: #141720;
+  --panel-hover: #1a1d2a;
+  --chrome: rgba(13, 15, 20, 0.95);
+  --chrome-strong: rgba(13, 15, 20, 0.98);
 
-  /* Text - Slightly warmer */
-  --text: #e4e4e7;
-  --text-strong: #fafafa;
-  --chat-text: #e4e4e7;
-  --muted: #71717a;
-  --muted-strong: #52525b;
-  --muted-foreground: #71717a;
+  /* Text - Warm off-white */
+  --text: #E8E6DF;
+  --text-strong: #F2F0E8;
+  --chat-text: #E8E6DF;
+  --muted: #6B6862;
+  --muted-strong: #524F4C;
+  --muted-foreground: #6B6862;
 
-  /* Border - Subtle but defined */
-  --border: #27272a;
-  --border-strong: #3f3f46;
-  --border-hover: #52525b;
-  --input: #27272a;
-  --ring: #ff5c5c;
+  /* Border */
+  --border: #1e2230;
+  --border-strong: #2a2f42;
+  --border-hover: #3a4058;
+  --input: #1e2230;
+  --ring: #8B5CF6;
 
-  /* Accent - Punchy signature red */
-  --accent: #ff5c5c;
-  --accent-hover: #ff7070;
-  --accent-muted: #ff5c5c;
-  --accent-subtle: rgba(255, 92, 92, 0.15);
-  --accent-foreground: #fafafa;
-  --accent-glow: rgba(255, 92, 92, 0.25);
-  --primary: #ff5c5c;
+  /* Accent - Sahasrara violet (was red) */
+  --accent: #8B5CF6;
+  --accent-hover: #9D70F7;
+  --accent-muted: #7C3AED;
+  --accent-subtle: rgba(139, 92, 246, 0.15);
+  --accent-foreground: #ffffff;
+  --accent-glow: rgba(139, 92, 246, 0.25);
+  --primary: #8B5CF6;
   --primary-foreground: #ffffff;
 
-  /* Secondary - Teal accent for variety */
-  --secondary: #1e2028;
-  --secondary-foreground: #f4f4f5;
-  --accent-2: #14b8a6;
-  --accent-2-muted: rgba(20, 184, 166, 0.7);
-  --accent-2-subtle: rgba(20, 184, 166, 0.15);
+  /* Secondary */
+  --secondary: #141720;
+  --secondary-foreground: #E8E6DF;
+  --accent-2: #2A7F8F;
+  --accent-2-muted: rgba(42, 127, 143, 0.7);
+  --accent-2-subtle: rgba(42, 127, 143, 0.15);
 
   /* Semantic - More saturated */
   --ok: #22c55e;
@@ -67,7 +85,7 @@
   --info: #3b82f6;
 
   /* Focus - With glow */
-  --focus: rgba(255, 92, 92, 0.25);
+  --focus: rgba(139, 92, 246, 0.25);
   --focus-ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--ring);
   --focus-glow: 0 0 0 2px var(--bg), 0 0 0 4px var(--ring), 0 0 20px var(--accent-glow);
 
@@ -143,13 +161,13 @@
   --border-hover: #a1a1aa;
   --input: #e4e4e7;
 
-  --accent: #dc2626;
-  --accent-hover: #ef4444;
-  --accent-muted: #dc2626;
-  --accent-subtle: rgba(220, 38, 38, 0.12);
+  --accent: #7c3aed;
+  --accent-hover: #8b5cf6;
+  --accent-muted: #6d28d9;
+  --accent-subtle: rgba(124, 58, 237, 0.12);
   --accent-foreground: #ffffff;
-  --accent-glow: rgba(220, 38, 38, 0.15);
-  --primary: #dc2626;
+  --accent-glow: rgba(124, 58, 237, 0.15);
+  --primary: #7c3aed;
   --primary-foreground: #ffffff;
 
   --secondary: #f4f4f5;
@@ -171,7 +189,8 @@
   --danger-subtle: rgba(220, 38, 38, 0.1);
   --info: #2563eb;
 
-  --focus: rgba(220, 38, 38, 0.2);
+  --ring: #7c3aed;
+  --focus: rgba(124, 58, 237, 0.2);
   --focus-glow: 0 0 0 2px var(--bg), 0 0 0 4px var(--ring), 0 0 16px var(--accent-glow);
 
   --grid-line: rgba(0, 0, 0, 0.05);
@@ -197,8 +216,8 @@ body {
 
 body {
   margin: 0;
-  font: 400 14px/1.55 var(--font-body);
-  letter-spacing: -0.02em;
+  font: 400 15px/1.55 var(--font-body);
+  letter-spacing: -0.015em;
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
@@ -351,7 +370,7 @@ select {
 @keyframes glow-pulse {
   0%,
   100% {
-    box-shadow: 0 0 0 rgba(255, 92, 92, 0);
+    box-shadow: 0 0 0 rgba(139, 92, 246, 0);
   }
   50% {
     box-shadow: 0 0 20px var(--accent-glow);

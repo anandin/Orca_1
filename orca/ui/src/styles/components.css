@@ -2610,3 +2610,227 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ===========================================
+   Futuristic card treatment (override)
+   =========================================== */
+
+.card {
+  background: linear-gradient(135deg, #13161e, #0f1218);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    var(--shadow-sm);
+}
+
+.card:hover {
+  border-color: rgba(139, 92, 246, 0.2);
+  box-shadow:
+    0 0 20px rgba(139, 92, 246, 0.06),
+    0 0 0 1px rgba(139, 92, 246, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    var(--shadow-md);
+}
+
+:root[data-theme="light"] .card {
+  background: #ffffff;
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+:root[data-theme="light"] .card:hover {
+  border-color: rgba(124, 58, 237, 0.2);
+  box-shadow: 0 0 16px rgba(124, 58, 237, 0.04), var(--shadow-md);
+}
+
+/* ===========================================
+   Mode toggle (sidebar footer)
+   =========================================== */
+
+.nav-mode-toggle {
+  display: flex;
+  margin: 8px 12px 12px;
+  background: var(--bg-elevated);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.nav-mode-toggle__btn {
+  flex: 1;
+  padding: 5px 8px;
+  border: none;
+  background: none;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.nav-mode-toggle__btn:hover {
+  color: var(--text);
+}
+
+.nav-mode-toggle__btn--active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.nav-mode-toggle__btn--active:hover {
+  background: var(--accent-hover);
+  color: #fff;
+}
+
+/* viveka-strip grid placement */
+viveka-strip {
+  grid-area: viveka;
+}
+
+/* ===========================================
+   Samskara Brain 3-panel layout
+   =========================================== */
+
+.samskara-shell {
+  display: grid;
+  grid-template-columns: 240px 1fr 300px;
+  grid-template-rows: 1fr;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  gap: 0;
+  border-top: 1px solid var(--border);
+}
+
+.samskara-left {
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.samskara-center {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.samskara-right {
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.samskara-section-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.samskara-section-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.samskara-status-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  padding: 4px 0;
+}
+
+.samskara-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.samskara-dot--ok {
+  background: var(--anahata);
+}
+
+.samskara-dot--offline {
+  background: var(--muted);
+}
+
+.samskara-badge {
+  font-size: 10px;
+  color: var(--muted);
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--bg-elevated);
+  display: inline-block;
+}
+
+.samskara-badge--brain {
+  color: var(--sahasrara);
+  background: var(--sahasrara-subtle);
+}
+
+.samskara-big-number {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--ajna);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.samskara-empty {
+  font-size: 12px;
+  color: var(--muted);
+  padding: 4px 0;
+}
+
+.samskara-divider {
+  height: 1px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .samskara-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+  }
+  .samskara-left {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 12px;
+    gap: 12px;
+  }
+  .samskara-right {
+    border-left: none;
+    border-top: 1px solid var(--border);
+    flex-direction: row;
+  }
+}
+
+/* ===========================================
+   Primary button style
+   =========================================== */
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}

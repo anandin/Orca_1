@@ -100,6 +100,7 @@ const BASE_METHODS = [
   "chat.history",
   "chat.abort",
   "chat.send",
+  "samskara.proxy",
 ];
 
 export function listGatewayMethods(): string[] {

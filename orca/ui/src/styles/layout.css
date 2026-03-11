@@ -12,10 +12,11 @@
   height: 100vh;
   display: grid;
   grid-template-columns: var(--shell-nav-width) minmax(0, 1fr);
-  grid-template-rows: var(--shell-topbar-height) 1fr;
+  grid-template-rows: var(--shell-topbar-height) 1fr 44px;
   grid-template-areas:
     "topbar topbar"
-    "nav content";
+    "nav content"
+    "viveka viveka";
   gap: 0;
   animation: dashboard-enter 0.4s var(--ease-out);
   transition: grid-template-columns var(--shell-focus-duration) var(--shell-focus-ease);
@@ -570,11 +571,12 @@
     --shell-pad: 12px;
     --shell-gap: 12px;
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto 1fr;
+    grid-template-rows: auto auto 1fr 44px;
     grid-template-areas:
       "topbar"
       "nav"
-      "content";
+      "content"
+      "viveka";
   }
 
   .nav {

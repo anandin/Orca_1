@@ -59,7 +59,7 @@ import type { ExecApprovalRequest } from "./controllers/exec-approval.ts";
 import type { ExecApprovalsFile, ExecApprovalsSnapshot } from "./controllers/exec-approvals.ts";
 import type { SkillMessage } from "./controllers/skills.ts";
 import type { GatewayBrowserClient, GatewayHelloOk } from "./gateway.ts";
-import type { Tab } from "./navigation.ts";
+import type { Tab, UiMode } from "./navigation.ts";
 import { loadSettings, type UiSettings } from "./storage.ts";
 import type { ResolvedTheme, ThemeMode } from "./theme.ts";
 import type {
@@ -121,6 +121,7 @@ export class OpenClawApp extends LitElement {
   }
   @state() password = "";
   @state() tab: Tab = "chat";
+  @state() uiMode: UiMode = (localStorage.getItem("orca_ui_mode") as UiMode | null) ?? "basic";
   @state() onboarding = resolveOnboardingMode();
   @state() connected = false;
   @state() theme: ThemeMode = this.settings.theme ?? "system";
@@ -378,6 +379,24 @@ export class OpenClawApp extends LitElement {
   @state() logsMaxBytes = 250_000;
   @state() logsAtBottom = true;
 
+  // Command palette
+  @state() cmdPaletteOpen = false;
+
+  // Samskara Brain state
+  @state() samskaraHealthScore: number | null = null;
+  @state() samskaraHealthLoading = false;
+  @state() samskaraMemoryNodes: unknown[] = [];
+  @state() samskaraMemoryLoading = false;
+  @state() samskaraSignals: unknown[] = [];
+  @state() samskaraConfigured = false;
+
+  // Viveka strip state
+  @state() vivekaLearning = true;
+  @state() vivekaMemory = true;
+  @state() vivekaReflexes = true;
+  @state() vivekaKilled = false;
+  @state() vivekaBusy = false;
+
   client: GatewayBrowserClient | null = null;
   private chatScrollFrame: number | null = null;
   private chatScrollTimeout: number | null = null;
@@ -397,6 +416,12 @@ export class OpenClawApp extends LitElement {
   private themeMedia: MediaQueryList | null = null;
   private themeMediaHandler: ((event: MediaQueryListEvent) => void) | null = null;
   private topbarObserver: ResizeObserver | null = null;
+  private cmdPaletteKeyHandler = (e: KeyboardEvent) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+      e.preventDefault();
+      this.cmdPaletteOpen = !this.cmdPaletteOpen;
+    }
+  };
 
   createRenderRoot() {
     return this;
@@ -405,6 +430,7 @@ export class OpenClawApp extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     handleConnected(this as unknown as Parameters<typeof handleConnected>[0]);
+    document.addEventListener("keydown", this.cmdPaletteKeyHandler);
   }
 
   protected firstUpdated() {
@@ -413,6 +439,7 @@ export class OpenClawApp extends LitElement {
 
   disconnectedCallback() {
     handleDisconnected(this as unknown as Parameters<typeof handleDisconnected>[0]);
+    document.removeEventListener("keydown", this.cmdPaletteKeyHandler);
     super.disconnectedCallback();
   }
 
@@ -469,6 +496,11 @@ export class OpenClawApp extends LitElement {
 
   setTab(next: Tab) {
     setTabInternal(this as unknown as Parameters<typeof setTabInternal>[0], next);
+  }
+
+  setUiMode(next: UiMode) {
+    this.uiMode = next;
+    localStorage.setItem("orca_ui_mode", next);
   }
 
   setTheme(next: ThemeMode, context?: Parameters<typeof setThemeInternal>[2]) {

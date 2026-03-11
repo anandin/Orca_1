@@ -67,7 +67,12 @@ import {
 } from "./controllers/skills.ts";
 import { buildExternalLinkRel, EXTERNAL_LINK_TARGET } from "./external-link.ts";
 import { icons } from "./icons.ts";
-import { normalizeBasePath, TAB_GROUPS, subtitleForTab, titleForTab } from "./navigation.ts";
+import {
+  normalizeBasePath,
+  tabGroupsForMode,
+  subtitleForTab,
+  titleForTab,
+} from "./navigation.ts";
 import {
   resolveAgentConfig,
   resolveConfiguredCronModelSuggestions,
@@ -87,8 +92,11 @@ import { renderInstances } from "./views/instances.ts";
 import { renderLogs } from "./views/logs.ts";
 import { renderNodes } from "./views/nodes.ts";
 import { renderOverview } from "./views/overview.ts";
+import { renderSamskara } from "./views/samskara.ts";
 import { renderSessions } from "./views/sessions.ts";
 import { renderSkills } from "./views/skills.ts";
+import "./components/viveka-strip.ts";
+import "./components/cmd-palette.ts";
 
 const AVATAR_DATA_RE = /^data:/i;
 const AVATAR_HTTP_RE = /^https?:\/\//i;
@@ -254,8 +262,8 @@ export function renderApp(state: AppViewState) {
               <img src=${basePath ? `${basePath}/favicon.svg` : "/favicon.svg"} alt="OpenClaw" />
             </div>
             <div class="brand-text">
-              <div class="brand-title">OPENCLAW</div>
-              <div class="brand-sub">Gateway Dashboard</div>
+              <div class="brand-title">Orca</div>
+              <div class="brand-sub">${state.uiMode === "advanced" ? "Advanced Mode" : ""}</div>
             </div>
           </div>
         </div>
@@ -274,7 +282,7 @@ export function renderApp(state: AppViewState) {
         </div>
       </header>
       <aside class="nav ${state.settings.navCollapsed ? "nav--collapsed" : ""}">
-        ${TAB_GROUPS.map((group) => {
+        ${tabGroupsForMode(state.uiMode).map((group) => {
           const isGroupCollapsed = state.settings.navGroupsCollapsed[group.label] ?? false;
           const hasActiveTab = group.tabs.some((tab) => tab === state.tab);
           return html`
@@ -317,6 +325,18 @@ export function renderApp(state: AppViewState) {
             </a>
           </div>
         </div>
+        <div class="nav-mode-toggle">
+          <button
+            class="nav-mode-toggle__btn ${state.uiMode === "basic" ? "nav-mode-toggle__btn--active" : ""}"
+            @click=${() => state.setUiMode("basic")}
+            title="Simple mode"
+          >Simple</button>
+          <button
+            class="nav-mode-toggle__btn ${state.uiMode === "advanced" ? "nav-mode-toggle__btn--active" : ""}"
+            @click=${() => state.setUiMode("advanced")}
+            title="Advanced mode"
+          >Advanced</button>
+        </div>
       </aside>
       <main class="content ${isChat ? "content--chat" : ""}">
         ${
@@ -357,6 +377,7 @@ export function renderApp(state: AppViewState) {
                 cronEnabled: state.cronStatus?.enabled ?? null,
                 cronNext,
                 lastChannelsRefresh: state.channelsLastSuccess,
+                uiMode: state.uiMode,
                 onSettingsChange: (next) => state.applySettings(next),
                 onPasswordChange: (next) => (state.password = next),
                 onSessionKeyChange: (next) => {
@@ -1115,9 +1136,45 @@ export function renderApp(state: AppViewState) {
               })
             : nothing
         }
+        ${state.tab === "samskara" ? renderSamskara(state) : nothing}
       </main>
+
+      <!-- Viveka strip: always-visible bottom bar -->
+      <viveka-strip
+        .learning=${state.vivekaLearning}
+        .memory=${state.vivekaMemory}
+        .reflexes=${state.vivekaReflexes}
+        .killed=${state.vivekaKilled}
+        .busy=${state.vivekaBusy}
+        @viveka-toggle-learning=${() => { state.vivekaLearning = !state.vivekaLearning; }}
+        @viveka-toggle-memory=${() => { state.vivekaMemory = !state.vivekaMemory; }}
+        @viveka-toggle-reflexes=${() => { state.vivekaReflexes = !state.vivekaReflexes; }}
+        @viveka-kill=${() => {
+          state.vivekaKilled = true;
+          state.vivekaLearning = false;
+          state.vivekaMemory = false;
+          state.vivekaReflexes = false;
+        }}
+        @viveka-resume=${() => {
+          state.vivekaKilled = false;
+          state.vivekaLearning = true;
+          state.vivekaMemory = true;
+          state.vivekaReflexes = true;
+        }}
+      ></viveka-strip>
+
       ${renderExecApprovalPrompt(state)}
       ${renderGatewayUrlConfirmation(state)}
+
+      <!-- ⌘K / Ctrl+K command palette -->
+      ${
+        state.cmdPaletteOpen
+          ? html`<cmd-palette
+              .appState=${state}
+              @cmd-palette-close=${() => { state.cmdPaletteOpen = false; }}
+            ></cmd-palette>`
+          : nothing
+      }
     </div>
   `;
 }

@@ -6,6 +6,7 @@ import { formatRelativeTimestamp, formatDurationHuman } from "../format.ts";
 import type { GatewayHelloOk } from "../gateway.ts";
 import { formatNextRun } from "../presenter.ts";
 import type { UiSettings } from "../storage.ts";
+import type { UiMode } from "../navigation.ts";
 import { shouldShowPairingHint } from "./overview-hints.ts";
 
 export type OverviewProps = {
@@ -20,12 +21,19 @@ export type OverviewProps = {
   cronEnabled: boolean | null;
   cronNext: number | null;
   lastChannelsRefresh: number | null;
+  uiMode: UiMode;
   onSettingsChange: (next: UiSettings) => void;
   onPasswordChange: (next: string) => void;
   onSessionKeyChange: (next: string) => void;
   onConnect: () => void;
   onRefresh: () => void;
 };
+
+function copyToClipboard(text: string) {
+  void navigator.clipboard.writeText(text).catch(() => {
+    // Clipboard API unavailable — silently ignore
+  });
+}
 
 export function renderOverview(props: OverviewProps) {
   const snapshot = props.hello?.snapshot as
@@ -36,11 +44,9 @@ export function renderOverview(props: OverviewProps) {
       }
     | undefined;
   const uptime = snapshot?.uptimeMs ? formatDurationHuman(snapshot.uptimeMs) : t("common.na");
-  const tick = snapshot?.policy?.tickIntervalMs
-    ? `${snapshot.policy.tickIntervalMs}ms`
-    : t("common.na");
   const authMode = snapshot?.authMode;
   const isTrustedProxy = authMode === "trusted-proxy";
+  const isBasic = props.uiMode === "basic";
 
   const pairingHint = (() => {
     if (!shouldShowPairingHint(props.connected, props.lastError, props.lastErrorCode)) {
@@ -49,23 +55,7 @@ export function renderOverview(props: OverviewProps) {
     return html`
       <div class="muted" style="margin-top: 8px">
         ${t("overview.pairing.hint")}
-        <div style="margin-top: 6px">
-          <span class="mono">openclaw devices list</span><br />
-          <span class="mono">openclaw devices approve &lt;requestId&gt;</span>
-        </div>
-        <div style="margin-top: 6px; font-size: 12px;">
-          ${t("overview.pairing.mobileHint")}
-        </div>
-        <div style="margin-top: 6px">
-          <a
-            class="session-link"
-            href="https://docs.openclaw.ai/web/control-ui#device-pairing-first-connection"
-            target=${EXTERNAL_LINK_TARGET}
-            rel=${buildExternalLinkRel()}
-            title="Device pairing docs (opens in new tab)"
-            >Docs: Device pairing</a
-          >
-        </div>
+        <div style="margin-top: 8px; font-size: 12px;">${t("overview.pairing.mobileHint")}</div>
       </div>
     `;
   })();
@@ -105,40 +95,51 @@ export function renderOverview(props: OverviewProps) {
     const isAuthRequired = props.lastErrorCode
       ? authRequiredCodes.has(props.lastErrorCode)
       : !hasToken && !hasPassword;
+
+    const getCodeCommand = "openclaw doctor --generate-gateway-token";
+
     if (isAuthRequired) {
       return html`
         <div class="muted" style="margin-top: 8px">
           ${t("overview.auth.required")}
-          <div style="margin-top: 6px">
-            <span class="mono">openclaw dashboard --no-open</span> → tokenized URL<br />
-            <span class="mono">openclaw doctor --generate-gateway-token</span> → set token
-          </div>
-          <div style="margin-top: 6px">
-            <a
-              class="session-link"
-              href="https://docs.openclaw.ai/web/dashboard"
-              target=${EXTERNAL_LINK_TARGET}
-              rel=${buildExternalLinkRel()}
-              title="Control UI auth docs (opens in new tab)"
-              >Docs: Control UI auth</a
-            >
-          </div>
+          ${
+            !isBasic
+              ? html`
+                  <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+                    <span class="mono" style="font-size: 12px;">${getCodeCommand}</span>
+                    <button
+                      class="btn btn-sm"
+                      @click=${() => copyToClipboard(getCodeCommand)}
+                      title="Copy command"
+                      >Copy</button
+                    >
+                  </div>
+                `
+              : ""
+          }
         </div>
       `;
     }
     return html`
       <div class="muted" style="margin-top: 8px">
-        ${t("overview.auth.failed", { command: "openclaw dashboard --no-open" })}
-        <div style="margin-top: 6px">
-          <a
-            class="session-link"
-            href="https://docs.openclaw.ai/web/dashboard"
-            target=${EXTERNAL_LINK_TARGET}
-            rel=${buildExternalLinkRel()}
-            title="Control UI auth docs (opens in new tab)"
-            >Docs: Control UI auth</a
-          >
-        </div>
+        ${t("overview.auth.failed", {
+          command: isBasic ? "" : getCodeCommand,
+        })}
+        ${
+          !isBasic
+            ? html`
+                <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+                  <span class="mono" style="font-size: 12px;">${getCodeCommand}</span>
+                  <button
+                    class="btn btn-sm"
+                    @click=${() => copyToClipboard(getCodeCommand)}
+                    title="Copy command"
+                    >Copy</button
+                  >
+                </div>
+              `
+            : ""
+        }
       </div>
     `;
   })();
@@ -166,7 +167,13 @@ export function renderOverview(props: OverviewProps) {
       <div class="muted" style="margin-top: 8px">
         ${t("overview.insecure.hint", { url: "http://127.0.0.1:18789" })}
         <div style="margin-top: 6px">
-          ${t("overview.insecure.stayHttp", { config: "gateway.controlUi.allowInsecureAuth: true" })}
+          ${
+            !isBasic
+              ? t("overview.insecure.stayHttp", {
+                  config: "gateway.controlUi.allowInsecureAuth: true",
+                })
+              : ""
+          }
         </div>
         <div style="margin-top: 6px">
           <a
@@ -175,16 +182,7 @@ export function renderOverview(props: OverviewProps) {
             target=${EXTERNAL_LINK_TARGET}
             rel=${buildExternalLinkRel()}
             title="Tailscale Serve docs (opens in new tab)"
-            >Docs: Tailscale Serve</a
-          >
-          <span class="muted"> · </span>
-          <a
-            class="session-link"
-            href="https://docs.openclaw.ai/web/control-ui#insecure-http"
-            target=${EXTERNAL_LINK_TARGET}
-            rel=${buildExternalLinkRel()}
-            title="Insecure HTTP docs (opens in new tab)"
-            >Docs: Insecure HTTP</a
+            >Learn more about secure setup</a
           >
         </div>
       </div>
@@ -226,7 +224,7 @@ export function renderOverview(props: OverviewProps) {
                       const v = (e.target as HTMLInputElement).value;
                       props.onSettingsChange({ ...props.settings, token: v });
                     }}
-                    placeholder="OPENCLAW_GATEWAY_TOKEN"
+                    placeholder="Your access code"
                   />
                 </label>
                 <label class="field">
@@ -238,21 +236,27 @@ export function renderOverview(props: OverviewProps) {
                       const v = (e.target as HTMLInputElement).value;
                       props.onPasswordChange(v);
                     }}
-                    placeholder="system or shared password"
+                    placeholder="Password (optional)"
                   />
                 </label>
               `
           }
-          <label class="field">
-            <span>${t("overview.access.sessionKey")}</span>
-            <input
-              .value=${props.settings.sessionKey}
-              @input=${(e: Event) => {
-                const v = (e.target as HTMLInputElement).value;
-                props.onSessionKeyChange(v);
-              }}
-            />
-          </label>
+          ${
+            !isBasic
+              ? html`
+                  <label class="field">
+                    <span>${t("overview.access.sessionKey")}</span>
+                    <input
+                      .value=${props.settings.sessionKey}
+                      @input=${(e: Event) => {
+                        const v = (e.target as HTMLInputElement).value;
+                        props.onSessionKeyChange(v);
+                      }}
+                    />
+                  </label>
+                `
+              : ""
+          }
           <label class="field">
             <span>${t("overview.access.language")}</span>
             <select
@@ -271,11 +275,13 @@ export function renderOverview(props: OverviewProps) {
           </label>
         </div>
         <div class="row" style="margin-top: 14px;">
-          <button class="btn" @click=${() => props.onConnect()}>${t("common.connect")}</button>
+          <button class="btn btn-primary" @click=${() => props.onConnect()}>
+            ${t("common.connect")}
+          </button>
           <button class="btn" @click=${() => props.onRefresh()}>${t("common.refresh")}</button>
-          <span class="muted">${
-            isTrustedProxy ? t("overview.access.trustedProxy") : t("overview.access.connectHint")
-          }</span>
+          <span class="muted">
+            ${isTrustedProxy ? t("overview.access.trustedProxy") : t("overview.access.connectHint")}
+          </span>
         </div>
       </div>
 
@@ -293,25 +299,29 @@ export function renderOverview(props: OverviewProps) {
             <div class="stat-label">${t("overview.snapshot.uptime")}</div>
             <div class="stat-value">${uptime}</div>
           </div>
-          <div class="stat">
-            <div class="stat-label">${t("overview.snapshot.tickInterval")}</div>
-            <div class="stat-value">${tick}</div>
-          </div>
-          <div class="stat">
-            <div class="stat-label">${t("overview.snapshot.lastChannelsRefresh")}</div>
-            <div class="stat-value">
-              ${props.lastChannelsRefresh ? formatRelativeTimestamp(props.lastChannelsRefresh) : t("common.na")}
-            </div>
-          </div>
+          ${
+            !isBasic
+              ? html`
+                  <div class="stat">
+                    <div class="stat-label">${t("overview.snapshot.lastChannelsRefresh")}</div>
+                    <div class="stat-value">
+                      ${props.lastChannelsRefresh
+                        ? formatRelativeTimestamp(props.lastChannelsRefresh)
+                        : t("common.na")}
+                    </div>
+                  </div>
+                `
+              : ""
+          }
         </div>
         ${
           props.lastError
             ? html`<div class="callout danger" style="margin-top: 14px;">
-              <div>${props.lastError}</div>
-              ${pairingHint ?? ""}
-              ${authHint ?? ""}
-              ${insecureContextHint ?? ""}
-            </div>`
+                <div>${props.lastError}</div>
+                ${pairingHint ?? ""}
+                ${authHint ?? ""}
+                ${insecureContextHint ?? ""}
+              </div>`
             : html`
                 <div class="callout" style="margin-top: 14px">
                   ${t("overview.snapshot.channelsHint")}
@@ -335,9 +345,17 @@ export function renderOverview(props: OverviewProps) {
       <div class="card stat-card">
         <div class="stat-label">${t("overview.stats.cron")}</div>
         <div class="stat-value">
-          ${props.cronEnabled == null ? t("common.na") : props.cronEnabled ? t("common.enabled") : t("common.disabled")}
+          ${
+            props.cronEnabled == null
+              ? t("common.na")
+              : props.cronEnabled
+                ? t("common.enabled")
+                : t("common.disabled")
+          }
         </div>
-        <div class="muted">${t("overview.stats.cronNext", { time: formatNextRun(props.cronNext) })}</div>
+        <div class="muted">
+          ${t("overview.stats.cronNext", { time: formatNextRun(props.cronNext) })}
+        </div>
       </div>
     </section>
 
@@ -345,12 +363,16 @@ export function renderOverview(props: OverviewProps) {
       <div class="card-title">${t("overview.notes.title")}</div>
       <div class="card-sub">${t("overview.notes.subtitle")}</div>
       <div class="note-grid" style="margin-top: 14px;">
-        <div>
-          <div class="note-title">${t("overview.notes.tailscaleTitle")}</div>
-          <div class="muted">
-            ${t("overview.notes.tailscaleText")}
-          </div>
-        </div>
+        ${
+          !isBasic
+            ? html`
+                <div>
+                  <div class="note-title">${t("overview.notes.tailscaleTitle")}</div>
+                  <div class="muted">${t("overview.notes.tailscaleText")}</div>
+                </div>
+              `
+            : ""
+        }
         <div>
           <div class="note-title">${t("overview.notes.sessionTitle")}</div>
           <div class="muted">${t("overview.notes.sessionText")}</div>
