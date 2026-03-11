@@ -1,0 +1,9 @@
+# Patch the stock OpenClaw image with the custom Samskara UI and server code
+# This avoids a full rebuild - only replaces the control-ui assets and compiled JS
+FROM ghcr.io/openclaw/openclaw:2026.3.1-amd64
+
+USER root
+# Replace control-ui assets with custom Samskara UI build
+COPY --chown=node:node custom-ui/control-ui /app/dist/control-ui
+
+USER node

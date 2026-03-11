@@ -34,6 +34,9 @@ tmp
 # build artifacts
 dist
 **/dist
+!dist/control-ui
+!dist/control-ui/**
+!dist/*.js
 apps/macos/.build
 apps/ios/build
 **/*.trace

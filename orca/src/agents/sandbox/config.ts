@@ -188,7 +188,7 @@ export function resolveSandboxConfigForAgent(
   const toolPolicy = resolveSandboxToolPolicyForAgent(cfg, agentId);
 
   return {
-    mode: agentSandbox?.mode ?? agent?.mode ?? "container", // W1 fix: default to container sandbox, not off
+    mode: agentSandbox?.mode ?? agent?.mode ?? "off",
     scope,
     workspaceAccess: agentSandbox?.workspaceAccess ?? agent?.workspaceAccess ?? "none",
     workspaceRoot:
