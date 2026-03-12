@@ -15,6 +15,6 @@ jobs:
       - uses: superfly/flyctl-actions/setup-flyctl@1.5
 
       - name: Deploy
-        run: flyctl deploy --app orca-1 --remote-only
+        run: flyctl deploy --app orca-1 --config orca/fly.toml --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
