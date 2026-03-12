@@ -24,11 +24,18 @@ if [[ -z "${SAMSKARA_API_KEY:-}" ]]; then
   exit 1
 fi
 
-# ── Auto-generate gateway token if not set ────────────────
-if [[ -z "${ORCA_GATEWAY_TOKEN:-}" ]]; then
+# ── Derive or generate gateway token ─────────────────────
+# Preferred: set ORCA_PASSPHRASE to a memorable phrase; the token is
+# deterministically derived so you can always recreate it.
+# Fallback: set ORCA_GATEWAY_TOKEN directly, or leave both unset to
+# get a random token printed once (old behaviour, not recommended).
+if [[ -n "${ORCA_PASSPHRASE:-}" ]]; then
+  ORCA_GATEWAY_TOKEN=$(printf '%s' "${ORCA_PASSPHRASE}:orca-gateway-token" | openssl dgst -sha256 -hex | awk '{print $2}')
+  echo "Gateway token derived from passphrase (reproducible)."
+elif [[ -z "${ORCA_GATEWAY_TOKEN:-}" ]]; then
   ORCA_GATEWAY_TOKEN=$(openssl rand -hex 32)
-  echo "Generated gateway token: $ORCA_GATEWAY_TOKEN"
-  echo "Save this! You'll need it to connect clients."
+  echo "WARNING: random gateway token generated — save it or set ORCA_PASSPHRASE next time."
+  echo "Token: $ORCA_GATEWAY_TOKEN"
 fi
 
 # ── Create Fly app if not exists ──────────────────────────
