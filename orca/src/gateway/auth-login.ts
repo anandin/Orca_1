@@ -78,7 +78,7 @@ export async function handleAuthLoginRequest(
   const email = typeof parsed.email === "string" ? parsed.email : "";
   const password = typeof parsed.password === "string" ? parsed.password : "";
 
-  const emailOk = safeEqualSecret(email, opts.adminEmail);
+  const emailOk = safeEqualSecret(email.toLowerCase(), opts.adminEmail.toLowerCase());
   const passwordOk = safeEqualSecret(password, opts.adminPassword);
 
   if (!emailOk || !passwordOk) {
