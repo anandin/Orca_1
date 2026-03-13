@@ -22,7 +22,7 @@ primary_region = "sjc" # Change to your closest: sjc, iad, lhr, nrt, syd
   OPENCLAW_PREFER_PNPM = "1"
   OPENCLAW_STATE_DIR = "/data"
   OPENCLAW_CONFIG_PATH = "/app/orca-config/openclaw.json"
-  NODE_OPTIONS = "--max-old-space-size=1536"
+  NODE_OPTIONS = "--max-old-space-size=384"
   # Samskara agent ID (registered at samskara-mind.replit.app)
   SAMSKARA_AGENT_ID = "orca-v1"
 
@@ -49,8 +49,8 @@ primary_region = "sjc" # Change to your closest: sjc, iad, lhr, nrt, syd
     path = "/healthz"
 
 [[vm]]
-  size = "shared-cpu-2x"
-  memory = "2048mb"
+  size = "shared-cpu-1x"
+  memory = "512mb"
 
 [mounts]
   source = "orca_data"

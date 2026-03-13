@@ -43,6 +43,8 @@ export async function handleAuthLoginRequest(
     /** The resolved gateway token to return on successful login. */
     gatewayToken: string | undefined;
     rateLimiter?: AuthRateLimiter;
+    /** Override base directory for device pairing state (used in tests). */
+    baseDir?: string;
   },
 ): Promise<boolean> {
   const url = new URL(req.url ?? "/", "http://localhost");
@@ -103,8 +105,8 @@ export async function handleAuthLoginRequest(
   // Auto-approve the browser's device so it can connect without a separate pairing step.
   if (deviceId && publicKey) {
     try {
-      const pairing = await requestDevicePairing({ deviceId, publicKey, platform: "web", displayName: "web" });
-      await approveDevicePairing(pairing.request.requestId);
+      const pairing = await requestDevicePairing({ deviceId, publicKey, platform: "web", displayName: "web" }, opts.baseDir);
+      await approveDevicePairing(pairing.request.requestId, opts.baseDir);
     } catch {
       // Non-fatal: the token is still returned; the user will see "pairing required" on connect.
     }
