@@ -8,7 +8,7 @@
 #   fly secrets set SAMSKARA_API_KEY=sk_...
 
 app = "orca-1"
-primary_region = "sjc" # Change to your closest: sjc, iad, lhr, nrt, syd
+primary_region = "iad" # Change to your closest: sjc, iad, lhr, nrt, syd
 
 [build]
   dockerfile = "Dockerfile"
