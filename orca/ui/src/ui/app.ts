@@ -124,6 +124,7 @@ export class OpenClawApp extends LitElement {
   @state() uiMode: UiMode = (localStorage.getItem("orca_ui_mode") as UiMode | null) ?? "basic";
   @state() onboarding = resolveOnboardingMode();
   @state() connected = false;
+  @state() needsLogin = false;
   @state() theme: ThemeMode = this.settings.theme ?? "system";
   @state() themeResolved: ResolvedTheme = "dark";
   @state() hello: GatewayHelloOk | null = null;
@@ -449,6 +450,16 @@ export class OpenClawApp extends LitElement {
 
   connect() {
     connectGatewayInternal(this as unknown as Parameters<typeof connectGatewayInternal>[0]);
+  }
+
+  handleLoginSuccess(token: string) {
+    // Store the token obtained from the email+password login endpoint, then connect.
+    applySettingsInternal(this as unknown as Parameters<typeof applySettingsInternal>[0], {
+      ...this.settings,
+      token,
+    });
+    this.needsLogin = false;
+    this.connect();
   }
 
   handleChatScroll(event: Event) {

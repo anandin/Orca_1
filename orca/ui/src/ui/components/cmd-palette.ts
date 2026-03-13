@@ -184,7 +184,7 @@ export class CmdPalette extends LitElement {
     // Nav views
     const groups = tabGroupsForMode(state.uiMode ?? "basic");
     for (const group of groups) {
-      for (const tab of group.tabs as Tab[]) {
+      for (const tab of group.tabs as unknown as Tab[]) {
         actions.push({
           id: `nav:${tab}`,
           label: titleForTab(tab),

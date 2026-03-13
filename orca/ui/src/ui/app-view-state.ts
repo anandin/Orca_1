@@ -276,6 +276,8 @@ export type AppViewState = {
     vivekaKilled: boolean;
     vivekaBusy: boolean;
 
+    needsLogin: boolean;
+    handleLoginSuccess: (token: string) => void;
     connect: () => void;
     setTab: (tab: Tab) => void;
     setUiMode: (mode: UiMode) => void;

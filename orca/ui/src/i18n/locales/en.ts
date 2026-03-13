@@ -42,7 +42,7 @@ export const en: TranslationMap = {
     config: "Settings",
     debug: "Developer Tools",
     logs: "System Log",
-    samskara: "Brain",
+    samskara: "Observe",
   },
   subtitles: {
     agents: "Configure your assistant's personality, tools, and behavior.",

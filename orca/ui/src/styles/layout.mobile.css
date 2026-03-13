@@ -115,11 +115,16 @@
   }
 
   .nav-item {
-    padding: 6px 10px;
-    font-size: 12px;
+    /* 44px min-height ensures comfortable touch targets on mobile */
+    min-height: 44px;
+    padding: 10px 14px;
+    font-size: 13px;
     border-radius: var(--radius-md);
     white-space: nowrap;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   /* Content */
@@ -236,7 +241,8 @@
     min-height: 60px;
     padding: 8px 10px;
     border-radius: var(--radius-md);
-    font-size: 14px;
+    /* 16px minimum prevents iOS auto-zoom on focus */
+    font-size: 16px;
   }
 
   /* Log stream */

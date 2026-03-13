@@ -97,6 +97,7 @@ import { renderSessions } from "./views/sessions.ts";
 import { renderSkills } from "./views/skills.ts";
 import "./components/viveka-strip.ts";
 import "./components/cmd-palette.ts";
+import "./components/login-form.ts";
 
 const AVATAR_DATA_RE = /^data:/i;
 const AVATAR_HTTP_RE = /^https?:\/\//i;
@@ -155,6 +156,15 @@ function resolveAssistantAvatarUrl(state: AppViewState): string | undefined {
 }
 
 export function renderApp(state: AppViewState) {
+  // Show the email+password login screen when the gateway requires auth
+  // and no token is stored (e.g. first visit, or stale token was cleared).
+  if (state.needsLogin) {
+    return html`<login-form
+      @login-success=${(e: CustomEvent<{ token: string }>) =>
+        state.handleLoginSuccess(e.detail.token)}
+    ></login-form>`;
+  }
+
   const openClawVersion =
     (typeof state.hello?.server?.version === "string" && state.hello.server.version.trim()) ||
     state.updateAvailable?.currentVersion ||

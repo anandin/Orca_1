@@ -50,6 +50,7 @@ import {
   resolveHookChannel,
   resolveHookDeliver,
 } from "./hooks.js";
+import { handleAuthLoginRequest } from "./auth-login.js";
 import { sendGatewayAuthFailure, setDefaultSecurityHeaders } from "./http-common.js";
 import { getBearerToken } from "./http-utils.js";
 import { handleOpenAiHttpRequest } from "./openai-http.js";
@@ -637,6 +638,16 @@ export function createGatewayHttpServer(opts: {
         ? resolvePluginRoutePathContext(requestPath)
         : null;
       const requestStages: GatewayHttpRequestStage[] = [
+        {
+          name: "auth-login",
+          run: () =>
+            handleAuthLoginRequest(req, res, {
+              adminEmail: process.env.OPENCLAW_ADMIN_EMAIL,
+              adminPassword: process.env.OPENCLAW_ADMIN_PASSWORD,
+              gatewayToken: resolvedAuth.token,
+              rateLimiter,
+            }),
+        },
         {
           name: "hooks",
           run: () => handleHooksRequest(req, res),

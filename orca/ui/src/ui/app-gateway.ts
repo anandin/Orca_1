@@ -236,6 +236,23 @@ export function connectGateway(host: GatewayHost) {
         resolveGatewayErrorDetailCode(error) ??
         (typeof error?.code === "string" ? error.code : null);
       if (code !== 1012) {
+        // Auth failures → show email login form and clear the stale/missing token.
+        const authErrorCodes = new Set<string>([
+          ConnectErrorDetailCodes.AUTH_REQUIRED,
+          ConnectErrorDetailCodes.AUTH_TOKEN_MISSING,
+          ConnectErrorDetailCodes.AUTH_TOKEN_MISMATCH,
+          ConnectErrorDetailCodes.AUTH_UNAUTHORIZED,
+          ConnectErrorDetailCodes.AUTH_PASSWORD_MISSING,
+          ConnectErrorDetailCodes.AUTH_PASSWORD_MISMATCH,
+        ]);
+        if (host.lastErrorCode && authErrorCodes.has(host.lastErrorCode)) {
+          applySettings(host as unknown as Parameters<typeof applySettings>[0], {
+            ...host.settings,
+            token: "",
+          });
+          (host as unknown as { needsLogin: boolean }).needsLogin = true;
+          return;
+        }
         if (error?.message) {
           host.lastError =
             host.lastErrorCode && isGenericBrowserFetchFailure(error.message)

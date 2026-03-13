@@ -1,9 +1,9 @@
 import { t } from "../i18n/index.ts";
 import type { IconName } from "./icons.js";
 
-// Basic mode: exactly 4 items, no group labels. Everything else is advanced-only.
+// Basic mode: 2 tabs only — Converse (chat) + Observe (samskara brain).
 export const BASIC_TAB_GROUPS = [
-  { label: "main", tabs: ["overview", "chat", "samskara", "instances"] },
+  { label: "main", tabs: ["chat", "samskara"] },
 ] as const;
 
 // Advanced mode: full developer groups (original layout + samskara)
@@ -62,8 +62,8 @@ export function tabGroupsForMode(mode: UiMode) {
   return mode === "basic" ? BASIC_TAB_GROUPS : ADVANCED_TAB_GROUPS;
 }
 
-/** The 4 tabs visible in basic mode. Everything else is advanced-only. */
-export const BASIC_TABS = new Set<Tab>(["overview", "chat", "samskara", "instances"]);
+/** The 2 tabs visible in basic mode (Converse + Observe). Everything else is advanced-only. */
+export const BASIC_TABS = new Set<Tab>(["chat", "samskara"]);
 
 /** Whether a tab is visible in basic mode */
 export function isTabVisibleInMode(tab: Tab, mode: UiMode): boolean {

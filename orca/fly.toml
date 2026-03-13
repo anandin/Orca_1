@@ -1,6 +1,11 @@
 # Orca Gateway — Fly.io deployment
 # Deploy: fly deploy --app orca-1
-# Secrets: fly secrets set OPENAI_API_KEY=sk-... SAMSKARA_API_KEY=sk_... ORCA_GATEWAY_TOKEN=...
+# Required secrets:
+#   fly secrets set OPENCLAW_GATEWAY_TOKEN=<random-hex>  # internal WS auth token
+#   fly secrets set OPENCLAW_ADMIN_EMAIL=you@example.com  # login form email
+#   fly secrets set OPENCLAW_ADMIN_PASSWORD=<strong-pass>  # login form password
+#   fly secrets set OPENAI_API_KEY=sk-...
+#   fly secrets set SAMSKARA_API_KEY=sk_...
 
 app = "orca-1"
 primary_region = "sjc" # Change to your closest: sjc, iad, lhr, nrt, syd
