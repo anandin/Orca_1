@@ -11,6 +11,10 @@
  */
 
 import type { IncomingMessage, ServerResponse } from "node:http";
+import {
+  approveDevicePairing,
+  requestDevicePairing,
+} from "../infra/device-pairing.js";
 import { safeEqualSecret } from "../security/secret-equal.js";
 import {
   AUTH_RATE_LIMIT_SCOPE_SHARED_SECRET,
@@ -77,6 +81,8 @@ export async function handleAuthLoginRequest(
   const parsed = body as Record<string, unknown>;
   const email = typeof parsed.email === "string" ? parsed.email : "";
   const password = typeof parsed.password === "string" ? parsed.password : "";
+  const deviceId = typeof parsed.deviceId === "string" ? parsed.deviceId.trim() : "";
+  const publicKey = typeof parsed.publicKey === "string" ? parsed.publicKey.trim() : "";
 
   const emailOk = safeEqualSecret(email.toLowerCase(), opts.adminEmail.toLowerCase());
   const passwordOk = safeEqualSecret(password, opts.adminPassword);
@@ -93,6 +99,17 @@ export async function handleAuthLoginRequest(
   if (opts.rateLimiter) {
     opts.rateLimiter.reset(clientIp, AUTH_RATE_LIMIT_SCOPE_SHARED_SECRET);
   }
+
+  // Auto-approve the browser's device so it can connect without a separate pairing step.
+  if (deviceId && publicKey) {
+    try {
+      const pairing = await requestDevicePairing({ deviceId, publicKey, platform: "web", displayName: "web" });
+      await approveDevicePairing(pairing.request.requestId);
+    } catch {
+      // Non-fatal: the token is still returned; the user will see "pairing required" on connect.
+    }
+  }
+
   sendJson(res, 200, { token: opts.gatewayToken });
   return true;
 }

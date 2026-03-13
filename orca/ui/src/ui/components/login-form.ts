@@ -11,6 +11,7 @@
 
 import { css, html, LitElement } from "lit";
 import { customElement, state } from "lit/decorators.js";
+import { loadOrCreateDeviceIdentity } from "../device-identity.js";
 
 @customElement("login-form")
 export class LoginForm extends LitElement {
@@ -156,10 +157,23 @@ export class LoginForm extends LitElement {
     this._error = null;
 
     try {
+      // Include device identity so the server can auto-approve pairing on success.
+      let deviceId: string | undefined;
+      let publicKey: string | undefined;
+      if (isSecureContext) {
+        try {
+          const identity = await loadOrCreateDeviceIdentity();
+          deviceId = identity.deviceId;
+          publicKey = identity.publicKey;
+        } catch {
+          // Non-fatal: proceed without device identity; user will see pairing prompt after login.
+        }
+      }
+
       const res = await fetch("/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, deviceId, publicKey }),
       });
 
       if (res.ok) {
