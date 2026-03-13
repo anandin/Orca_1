@@ -24,6 +24,6 @@ jobs:
 
       - name: Deploy
         working-directory: orca
-        run: flyctl deploy --app orca-1 --remote-only
+        run: flyctl deploy --app orca-1 --remote-only --dockerfile Dockerfile
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
