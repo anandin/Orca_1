@@ -31,7 +31,7 @@ primary_region = "sjc" # Change to your closest: sjc, iad, lhr, nrt, syd
 
 [[files]]
   guest_path = "/app/orca-config/openclaw.json"
-  raw_value = "{\"gateway\":{\"controlUi\":{\"dangerouslyAllowHostHeaderOriginFallback\":true}}}"
+  raw_value = "{\"gateway\":{\"controlUi\":{\"dangerouslyAllowHostHeaderOriginFallback\":true,\"dangerouslyDisableDeviceAuth\":true}}}"
 
 [http_service]
   internal_port = 3000
