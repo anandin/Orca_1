@@ -13,6 +13,9 @@
     "tls": {
       "enabled": true,
       "autoGenerate": true
+    },
+    "controlUi": {
+      "dangerouslyDisableDeviceAuth": true
     }
   },
 

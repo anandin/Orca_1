@@ -5,7 +5,7 @@
 # ═══════════════════════════════════════════════════════════
 set -euo pipefail
 
-APP="orca-gateway"
+APP="orca-1"
 REGION="${FLY_REGION:-sjc}"
 
 # ── Preflight checks ──────────────────────────────────────
@@ -53,7 +53,7 @@ fi
 # ── Set secrets ───────────────────────────────────────────
 echo "Setting secrets..."
 fly secrets set \
-  ORCA_GATEWAY_TOKEN="$ORCA_GATEWAY_TOKEN" \
+  OPENCLAW_GATEWAY_TOKEN="$ORCA_GATEWAY_TOKEN" \
   SAMSKARA_API_KEY="$SAMSKARA_API_KEY" \
   SAMSKARA_AGENT_ID="${SAMSKARA_AGENT_ID:-orca-v1}" \
   ${OPENAI_API_KEY:+OPENAI_API_KEY="$OPENAI_API_KEY"} \

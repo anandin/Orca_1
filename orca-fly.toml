@@ -2,7 +2,7 @@
 # Deploy: fly deploy --app orca-gateway
 # Secrets: fly secrets set OPENAI_API_KEY=sk-... SAMSKARA_API_KEY=sk_... ORCA_GATEWAY_TOKEN=...
 
-app = "orca-gateway"
+app = "orca-1"
 primary_region = "sjc" # Change to your closest: sjc, iad, lhr, nrt, syd
 
 [build]
@@ -21,7 +21,7 @@ primary_region = "sjc" # Change to your closest: sjc, iad, lhr, nrt, syd
   SAMSKARA_AGENT_ID = "orca-v1"
 
 [processes]
-  app = "node dist/index.js gateway --allow-unconfigured --port 3000 --bind lan"
+  app = "node dist/index.js gateway --port 3000 --bind lan"
 
 [http_service]
   internal_port = 3000
@@ -45,3 +45,7 @@ primary_region = "sjc" # Change to your closest: sjc, iad, lhr, nrt, syd
 [mounts]
   source = "orca_data"
   destination = "/data"
+
+[[files]]
+  guest_path = "/data/openclaw.json"
+  content = '''{"gateway":{"controlUi":{"dangerouslyDisableDeviceAuth":true}}}'''
