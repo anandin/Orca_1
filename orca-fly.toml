@@ -1,9 +1,9 @@
 # Orca Gateway — Fly.io deployment
-# Deploy: fly deploy --app orca-gateway
-# Secrets: fly secrets set OPENAI_API_KEY=sk-... SAMSKARA_API_KEY=sk_... ORCA_GATEWAY_TOKEN=...
+# Deploy: fly deploy --app orca-1
+# Secrets: fly secrets set OPENAI_API_KEY=sk-... SAMSKARA_API_KEY=sk_... OPENCLAW_GATEWAY_TOKEN=...
 
 app = "orca-1"
-primary_region = "sjc" # Change to your closest: sjc, iad, lhr, nrt, syd
+primary_region = "iad"
 
 [build]
   dockerfile = "Dockerfile"
