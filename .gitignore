@@ -4,3 +4,4 @@ orca/dist/
 orca/.cache/
 orca/**/*.tsbuildinfo
 orca/coverage/
+node_modules/

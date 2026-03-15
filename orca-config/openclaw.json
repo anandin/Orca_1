@@ -1,0 +1,38 @@
+{
+  "gateway": {
+    "mode": "cloud",
+    "bind": "0.0.0.0",
+    "port": 3000,
+    "auth": { "mode": "token" },
+    "controlUi": {
+      "enabled": true,
+      "allowedOrigins": ["*"],
+      "dangerouslyDisableDeviceAuth": true
+    }
+  },
+  "agents": {
+    "main": {
+      "model": {
+        "primary": "openai/gpt-4o",
+        "fallback": "deepseek/deepseek-chat:free"
+      },
+      "plugins": {
+        "acpx": {
+          "permissionMode": "approve-reads",
+          "timeoutSeconds": 120,
+          "mcpServers": {
+            "samskara": {
+              "type": "url",
+              "url": "https://samskara-mind.replit.app/mcp",
+              "headers": { "X-API-Key": "${SAMSKARA_API_KEY}" }
+            }
+          }
+        }
+      },
+      "sandbox": { "mode": "container" }
+    }
+  },
+  "channels": { "telegram": { "enabled": true } },
+  "tools": { "exec": { "security": "full" } },
+  "session": { "dmScope": "per-channel-peer" }
+}
